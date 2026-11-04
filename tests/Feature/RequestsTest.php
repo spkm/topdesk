@@ -131,8 +131,8 @@ it('uploads a file as multipart form data, with the other fields the endpoint ta
         ->and($request->getHeaderLine('Content-Type'))->toStartWith('multipart/form-data; boundary=')
         ->and($body)->toContain('name="file"; filename="'.$expectedName.'"')
         ->and($body)->toContain('FILE BYTES')
-        ->and($body)->toContain("name=\"description\"\r\n\r\nPhoto of the damage\r\n")
-        ->and($body)->toContain("name=\"invisibleForCaller\"\r\n\r\ntrue\r\n");
+        ->and($body)->toMatch('/name="description"\r\n(?:[^\r\n]+\r\n)*\r\nPhoto of the damage\r\n/')
+        ->and($body)->toMatch('/name="invisibleForCaller"\r\n(?:[^\r\n]+\r\n)*\r\ntrue\r\n/');
 })->with([
     'contents with a name' => [fn () => 'FILE BYTES', 'damage.jpg', 'damage.jpg'],
     'contents without a name' => [fn () => 'FILE BYTES', null, 'file'],
