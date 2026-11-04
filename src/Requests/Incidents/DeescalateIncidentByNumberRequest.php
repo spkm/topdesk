@@ -1,0 +1,38 @@
+<?php
+
+namespace spkm\Topdesk\Requests\Incidents;
+
+use JsonSerializable;
+use Saloon\Enums\Method;
+use spkm\Topdesk\Data\Incidents\Incident;
+use spkm\Topdesk\Requests\WriteRequest;
+use spkm\Topdesk\Support\Path;
+
+/**
+ * Deescalate an incident by number: PUT /tas/api/incidents/number/{number}/deescalate.
+ *
+ * NOTE: PATCH operation can be used as well
+ */
+class DeescalateIncidentByNumberRequest extends WriteRequest
+{
+    protected Method $method = Method::PUT;
+
+    protected string $responseShape = self::ONE;
+
+    protected ?string $dto = Incident::class;
+
+    /**
+     * @param  array<mixed>|JsonSerializable  $body  The record, as an array of TOPdesk's field names or a model.
+     * @param  array<string, mixed>  $options  Query options.
+     */
+    public function __construct(protected int|string $number, array|JsonSerializable $body = [], array $options = [])
+    {
+        $this->record = $body;
+        $this->options = $options;
+    }
+
+    public function resolveEndpoint(): string
+    {
+        return '/tas/api/incidents/number/'.Path::segment((string) $this->number).'/deescalate';
+    }
+}
